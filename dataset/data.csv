@@ -1,0 +1,6 @@
+image_path,label
+images/leaf1.jpg,Healthy
+images/leaf2.jpg,Healthy
+images/leaf3.jpg,Tomato_Early_Blight
+images/leaf4.jpg,Tomato_Early_Blight
+images/leaf5.jpg,Tomato_Late_Blight

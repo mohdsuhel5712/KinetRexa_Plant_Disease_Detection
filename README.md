@@ -3,7 +3,7 @@
 A Deep Learning-based web application that predicts plant diseases from leaf images using **PyTorch, CNN, and Flask**.
 
 ## 🚀 Features
-<b>NOW I MAKE CHNAGE FOR THE BRANCH 2 </b>
+<b>NOW I MAKE CHNAGE FOR THE BRANCH 2 {dropdown}</b>
 * Upload plant/leaf image
 * Predict plant disease using a trained CNN model
 * Display prediction result

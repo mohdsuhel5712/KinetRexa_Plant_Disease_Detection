@@ -1,4 +1,4 @@
-.......TAKS 01......# 🌱 Plant Disease Detection System
+NAME : Mohd Suhel (07/08/2026).......TAKS 01......# 🌱 Plant Disease Detection System
 
 A Deep Learning-based web application that predicts plant diseases from leaf images using **PyTorch, CNN, and Flask**.
 

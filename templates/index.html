@@ -1,158 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>
-            Plant Disease Detection
-      </title>
-      <style>
-            * {
-                  margin: 0;
-                  padding: 0;
-                  box-sizing: border-box;
-            }
-            body {
-                  min-height: 100vh;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  font-family: Arial, sans-serif;
-                  background:
-                        linear-gradient(135deg,
-                              #d4fc79,
-                              #96e6a1);
-                  padding: 25px;
-            }
-            .container {
-                  width: 100%;
-                  max-width: 700px;
-                  background: white;
-                  padding: 40px;
-                  border-radius: 20px;
-                  box-shadow:
-                        0 15px 40px rgba(0,
-                              0,
-                              0,
-                              0.2);
-                  text-align: center;
-            }
-            h1 {
-                  color: #1f6b3b;
-                  margin-bottom: 10px;
-            }
-            .description {
-                  color: #555;
-                  margin-bottom: 30px;
-            }
-            form {
-                  display: flex;
-                  flex-direction: column;
-                  gap: 20px;
-            }
-            input[type="file"] {
-                  width: 100%;
-                  padding: 15px;
-                  border:
-                        2px dashed #3c9d5d;
-                  border-radius: 10px;
-                  cursor: pointer;
-            }
-            button {
-                  border: none;
-                  padding: 15px;
-                  border-radius: 10px;
-                  background: #287a45;
-                  color: white;
-                  font-size: 17px;
-                  font-weight: bold;
-                  cursor: pointer;
-            }
-            button:hover {
-                  background: #1c5d33;
-            }
-            .error {
-                  margin-top: 25px;
-                  padding: 15px;
-                  color: #a10000;
-                  background: #ffdada;
-                  border-radius: 10px;
-            }
-            .result {
-                  margin-top: 30px;
-                  padding: 25px;
-                  background: #edf9f0;
-                  border-radius: 15px;
-            }
-            .result h2 {
-                  color: #216c3b;
-                  margin-bottom: 15px;
-            }
-            .result p {
-                  margin: 10px;
-                  font-size: 18px;
-            }
-            .uploaded-image {
-                  width: 100%;
-                  max-width: 400px;
-                  max-height: 350px;
-                  object-fit: contain;
-                  margin-top: 20px;
-                  border-radius: 12px;
-                  border:
-                        3px solid #4b9b63;
-            }
-      </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plant Disease Detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Work+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f1e4;
+    --paper-2:#eee5d1;
+    --ink:#233524;
+    --forest:#2f4a3c;
+    --forest-2:#1e3129;
+    --sage:#8a9a6b;
+    --rust:#c1502e;
+    --gold:#c9992f;
+    --line: rgba(35,53,36,0.14);
+    --radius: 18px;
+    --ease: cubic-bezier(.22,.9,.32,1);
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    min-height:100vh;
+    font-family:'Work Sans', sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(ellipse at 15% 0%, rgba(138,154,107,0.16), transparent 55%),
+      radial-gradient(ellipse at 85% 100%, rgba(193,80,46,0.08), transparent 50%),
+      var(--paper);
+    display:flex;
+    justify-content:center;
+    padding: clamp(24px, 5vw, 64px) 18px 40px;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  /* faint paper grain */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(rgba(35,53,36,0.045) 1px, transparent 1px),
+      radial-gradient(rgba(35,53,36,0.035) 1px, transparent 1px);
+    background-size: 3px 3px, 7px 7px;
+    background-position: 0 0, 2px 3px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .page{
+    width:100%;
+    max-width: 760px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    text-align:center;
+    margin-bottom: 30px;
+    position:relative;
+  }
+
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--forest);
+    opacity:0.75;
+    margin-bottom: 14px;
+  }
+
+  .headline{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size: clamp(34px, 6vw, 52px);
+    line-height:1.05;
+    letter-spacing: -0.01em;
+    color: var(--forest-2);
+  }
+  .headline em{
+    font-style: italic;
+    font-weight:500;
+    color: var(--rust);
+  }
+
+  .subhead{
+    max-width: 480px;
+    margin: 16px auto 0;
+    color: var(--ink);
+    opacity:0.72;
+    font-size: 15.5px;
+    line-height:1.55;
+  }
+
+  .leaf-signature{
+    width: 90px;
+    height: 60px;
+    margin: 22px auto 0;
+    display:block;
+    overflow:visible;
+  }
+  .leaf-signature path{
+    fill:none;
+    stroke: var(--sage);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    pathLength: 1;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: draw-leaf 1.6s var(--ease) 0.2s forwards;
+  }
+  .leaf-signature path.vein{
+    stroke: var(--gold);
+    stroke-width: 1;
+    animation-delay: 0.9s;
+  }
+  @keyframes draw-leaf{ to{ stroke-dashoffset:0; } }
+
+  /* ---------- Upload card ---------- */
+  .card{
+    background: #fffdf8;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(20px, 4vw, 34px);
+    box-shadow: 0 1px 2px rgba(35,53,36,0.04), 0 20px 50px -28px rgba(35,53,36,0.35);
+  }
+
+  form{ display:flex; flex-direction:column; gap:18px; }
+
+  .dropzone{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    gap:6px;
+    min-height: 210px;
+    border: 1.5px dashed rgba(47,74,60,0.35);
+    border-radius: 14px;
+    background: repeating-linear-gradient(135deg, rgba(138,154,107,0.05) 0 10px, transparent 10px 20px);
+    cursor:pointer;
+    padding: 24px;
+    transition: border-color .25s var(--ease), background-color .25s var(--ease), transform .2s var(--ease);
+    overflow:hidden;
+  }
+  .dropzone:hover{ border-color: var(--sage); }
+  .dropzone.drag-over{
+    border-color: var(--forest);
+    background-color: rgba(138,154,107,0.1);
+    transform: scale(1.01);
+  }
+  .dropzone:focus-within{
+    outline: 2px solid var(--forest);
+    outline-offset: 3px;
+  }
+  .dropzone input[type="file"]{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    cursor:pointer;
+  }
+
+  .dz-icon{ width:38px; height:38px; color: var(--forest); opacity:0.8; }
+  .dz-icon path{
+    fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;
+    pathLength:1; stroke-dasharray:1; stroke-dashoffset:1;
+    animation: draw-leaf 1.3s var(--ease) 0.3s forwards;
+  }
+
+  .dz-title{ font-weight:600; font-size:15.5px; margin-top:4px; }
+  .dz-sub{ font-family:'Space Mono', monospace; font-size:11.5px; letter-spacing:0.04em; opacity:0.55; text-transform:uppercase; }
+
+  .preview-img{
+    max-width:100%;
+    max-height: 260px;
+    border-radius: 10px;
+    object-fit:contain;
+  }
+
+  .run-btn{
+    border:none;
+    padding: 16px;
+    border-radius: 12px;
+    background: var(--forest);
+    color: var(--paper);
+    font-family:'Work Sans', sans-serif;
+    font-size: 15.5px;
+    font-weight:600;
+    letter-spacing: 0.01em;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition: background-color .2s var(--ease), transform .15s var(--ease), box-shadow .2s var(--ease);
+    box-shadow: 0 10px 24px -12px rgba(30,49,41,0.55);
+  }
+  .run-btn:hover{ background: var(--forest-2); transform: translateY(-1px); }
+  .run-btn:active{ transform: translateY(0); }
+  .run-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+  .run-btn svg{ width:16px; height:16px; transition: transform .2s var(--ease); }
+  .run-btn:hover svg{ transform: translateX(3px); }
+
+  /* ---------- Alert ---------- */
+  .alert-strip{
+    margin-top: 22px;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding: 16px 18px;
+    background: #fbeae3;
+    border: 1px solid rgba(193,80,46,0.35);
+    border-left: 4px solid var(--rust);
+    border-radius: 10px;
+    color: #8a3517;
+    animation: slide-in .4s var(--ease);
+  }
+  .alert-strip svg{ width:18px; height:18px; flex-shrink:0; margin-top:2px; color: var(--rust); }
+  .alert-strip p{ font-size: 14.5px; line-height:1.5; }
+  @keyframes slide-in{ from{ opacity:0; transform: translateY(-8px);} to{ opacity:1; transform:translateY(0);} }
+
+  /* ---------- Result ---------- */
+  .result-card{
+    margin-top: 26px;
+    background: #fffdf8;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(18px, 4vw, 28px);
+    display:grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 26px;
+    align-items:center;
+    box-shadow: 0 1px 2px rgba(35,53,36,0.04), 0 20px 50px -28px rgba(35,53,36,0.35);
+    animation: rise-in .55s var(--ease);
+  }
+  @keyframes rise-in{ from{ opacity:0; transform: translateY(14px);} to{ opacity:1; transform:translateY(0);} }
+
+  .result-image-wrap{
+    position:relative;
+    border-radius: 12px;
+    overflow:hidden;
+    border: 1px solid var(--line);
+    background: var(--paper-2);
+  }
+  .uploaded-image{ width:100%; display:block; max-height: 320px; object-fit:cover; }
+  .scan-sweep{
+    position:absolute; left:0; right:0; height: 40%;
+    background: linear-gradient(180deg, transparent, rgba(138,154,107,0.4), transparent);
+    animation: sweep 2.1s ease-in-out 1;
+    pointer-events:none;
+  }
+  @keyframes sweep{
+    0%{ top:-40%; opacity:0; }
+    15%{ opacity:1; }
+    85%{ opacity:1; }
+    100%{ top:100%; opacity:0; }
+  }
+
+  .result-info{ display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+  .result-eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:11px; letter-spacing:0.16em; text-transform:uppercase;
+    color: var(--sage); font-weight:700;
+  }
+  .disease-name{
+    font-family:'Fraunces', serif;
+    font-weight:600; font-style:italic;
+    font-size: clamp(22px, 3.4vw, 28px);
+    color: var(--forest-2);
+    line-height:1.15;
+    margin-bottom: 14px;
+  }
+
+  .gauge{ position:relative; width:104px; height:104px; }
+  .gauge svg{ transform: rotate(-90deg); width:100%; height:100%; }
+  .gauge-track{ fill:none; stroke: var(--paper-2); stroke-width:9; }
+  .gauge-fill{
+    fill:none; stroke: var(--rust); stroke-width:9; stroke-linecap:round;
+    transition: stroke-dashoffset 1.3s var(--ease) 0.15s;
+  }
+  .gauge-value{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono', monospace; font-weight:700; font-size:17px;
+    color: var(--forest-2);
+  }
+  .gauge-label{
+    font-family:'Space Mono', monospace;
+    font-size: 11px; letter-spacing:0.08em; text-transform:uppercase;
+    opacity:0.55; margin-top:10px;
+  }
+
+  @media (max-width: 560px){
+    .result-card{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- Footer ---------- */
+  .foot{
+    text-align:center;
+    margin-top: 34px;
+    font-family:'Space Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing:0.04em;
+    color: var(--ink);
+    opacity:0.45;
+  }
+
+  /* ---------- Analyzing overlay ---------- */
+  .scan-overlay{
+    position:fixed; inset:0;
+    background: rgba(30,49,41,0.94);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap: 18px;
+    z-index: 50;
+    opacity:0; pointer-events:none;
+    transition: opacity .3s var(--ease);
+  }
+  .scan-overlay.active{ opacity:1; pointer-events:all; }
+  .scan-overlay svg{ width:64px; height:64px; }
+  .scan-overlay svg path{
+    fill:none; stroke: var(--sage); stroke-width:1.6; stroke-linecap:round;
+    pathLength:1; stroke-dasharray:1; stroke-dashoffset:0;
+    animation: pulse-draw 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse-draw{
+    0%,100%{ stroke-dashoffset:1; opacity:0.3; }
+    50%{ stroke-dashoffset:0; opacity:1; }
+  }
+  .scan-overlay p{
+    font-family:'Space Mono', monospace;
+    color: var(--paper);
+    font-size: 13px; letter-spacing: 0.1em; text-transform:uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior:auto !important; }
+  }
+</style>
 </head>
 <body>
-      <div class="container">
-            <h1>
-                  🌿 Plant Disease Detection
-            </h1>
-            <p class="description">
-                  Upload a leaf image and detect
-                  the plant disease using CNN.
-            </p>
-            <form action="/predict" method="POST" enctype="multipart/form-data">
-                  <input type="file" name="leaf_image" accept="image/*" required>
-                  <button type="submit">
-                        Detect Disease
-                  </button>
-            </form>
 
-            {% if error %}
-            <div class="error">
-                  {{ error }}
-            </div>
-            {% endif %}
+  <div class="scan-overlay" id="scanOverlay" aria-hidden="true">
+    <svg viewBox="0 0 60 60"><path d="M30 6 C48 10 50 30 30 54 C10 30 12 10 30 6 Z M30 6 L30 54"/></svg>
+    <p>Analyzing leaf sample&hellip;</p>
+  </div>
 
+  <main class="page">
 
-            {% if prediction %}
+    <header class="hero">
+      <p class="eyebrow">Diagnostic Tool · CNN Model</p>
+      <h1 class="headline">Plant Disease <em>Detection</em></h1>
+      <p class="subhead">Upload a photo of a leaf and the model will identify what's affecting it, in seconds.</p>
+      <svg class="leaf-signature" viewBox="0 0 90 60" aria-hidden="true">
+        <path d="M45 6 C70 10 82 28 45 54 C8 28 20 10 45 6 Z"/>
+        <path class="vein" d="M45 12 L45 48 M45 26 L30 18 M45 26 L60 18 M45 38 L32 32 M45 38 L58 32"/>
+      </svg>
+    </header>
 
-            <div class="result">
-                  <h2>
-                        Prediction Result
-                  </h2>
-                  <p>
-                        <strong>
-                              Disease:
-                        </strong>
-                        {{ prediction }}
-                  </p>
-                  <p>
-                        <strong>
-                              Confidence:
-                        </strong>
-                        {{ confidence }}%
-                  </p>
-                  <img class="uploaded-image" src="{{ url_for(
-                    'static',
-                    filename=image_url
-                ) }}" alt="Uploaded Leaf">
-            </div>
-            {% endif %}
+    <section class="card upload-card">
+      <form action="/predict" method="POST" enctype="multipart/form-data" id="uploadForm">
+        <label class="dropzone" id="dropzone" for="leaf_image">
+          <input type="file" name="leaf_image" id="leafImage" accept="image/*" required>
+          <div class="dropzone-inner" id="dropzoneInner">
+            <svg class="dz-icon" viewBox="0 0 40 40" aria-hidden="true">
+              <path d="M20 4 C32 6 36 20 20 36 C4 20 8 6 20 4 Z M20 10 L20 32"/>
+            </svg>
+            <p class="dz-title">Drop a leaf photo here</p>
+            <p class="dz-sub">or click to browse — JPG, PNG</p>
+          </div>
+          <img id="previewImg" class="preview-img" alt="" hidden>
+        </label>
 
-            
+        <button type="submit" class="run-btn">
+          <span>Run Diagnosis</span>
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </form>
+    </section>
+
+    {% if error %}
+    <div class="alert-strip" role="alert">
+      <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 6.5v4M10 13.2h.01M2.5 16.5h15L10 3 2.5 16.5Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p>{{ error }}</p>
+    </div>
+    {% endif %}
+
+    {% if prediction %}
+    <section class="result-card">
+      <div class="result-image-wrap">
+        <img class="uploaded-image" src="{{ url_for('static', filename=image_url) }}" alt="Uploaded Leaf">
+        <div class="scan-sweep"></div>
       </div>
+      <div class="result-info">
+        <p class="result-eyebrow">Diagnosis</p>
+        <h2 class="disease-name">{{ prediction }}</h2>
+        <div class="gauge" id="gauge" data-confidence="{{ confidence }}">
+          <svg viewBox="0 0 120 120">
+            <circle class="gauge-track" cx="60" cy="60" r="52"/>
+            <circle class="gauge-fill" id="gaugeFill" cx="60" cy="60" r="52"/>
+          </svg>
+          <span class="gauge-value">{{ confidence }}%</span>
+        </div>
+        <p class="gauge-label">Model confidence</p>
+      </div>
+    </section>
+    {% endif %}
+
+    <footer class="foot">
+      <p>Powered by a convolutional neural network trained on leaf imagery</p>
+    </footer>
+
+  </main>
+
+<script>
+  // Drag & drop + preview
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('leafImage');
+  const previewImg = document.getElementById('previewImg');
+  const dropzoneInner = document.getElementById('dropzoneInner');
+
+  function showPreview(file){
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      previewImg.src = e.target.result;
+      previewImg.hidden = false;
+      dropzoneInner.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  fileInput.addEventListener('change', e => {
+    if(e.target.files && e.target.files[0]) showPreview(e.target.files[0]);
+  });
+
+  ['dragenter','dragover'].forEach(evt =>
+    dropzone.addEventListener(evt, e => {
+      e.preventDefault();
+      dropzone.classList.add('drag-over');
+    })
+  );
+  ['dragleave','drop'].forEach(evt =>
+    dropzone.addEventListener(evt, e => {
+      e.preventDefault();
+      dropzone.classList.remove('drag-over');
+    })
+  );
+  dropzone.addEventListener('drop', e => {
+    const file = e.dataTransfer.files[0];
+    if(file){
+      fileInput.files = e.dataTransfer.files;
+      showPreview(file);
+    }
+  });
+
+  // Analyzing overlay on submit
+  const form = document.getElementById('uploadForm');
+  const overlay = document.getElementById('scanOverlay');
+  form.addEventListener('submit', () => {
+    if(fileInput.files.length){
+      overlay.classList.add('active');
+    }
+  });
+
+  // Confidence gauge fill animation
+  const gauge = document.getElementById('gauge');
+  if(gauge){
+    const fill = document.getElementById('gaugeFill');
+    const radius = 52;
+    const circumference = 2 * Math.PI * radius;
+    const pct = parseFloat(gauge.dataset.confidence) || 0;
+    fill.style.strokeDasharray = circumference;
+    fill.style.strokeDashoffset = circumference;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        fill.style.strokeDashoffset = circumference - (circumference * Math.min(pct,100) / 100);
+      });
+    });
+  }
+</script>
+
 </body>
 </html>

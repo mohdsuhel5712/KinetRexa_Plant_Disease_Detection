@@ -1,7 +1,7 @@
+os
 Flask
-gunicorn
-numpy
-pandas
-scikit-learn
-joblib
+Werkzeug
 torch
+torchvision
+Pillow
+gunicorn
